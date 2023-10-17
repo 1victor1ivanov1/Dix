@@ -1,3 +1,12 @@
 [submodule "Dix/Vendor/GLFW"]
 	path = Dix/Vendor/GLFW
 	url = https://github.com/TheCherno/glfw.git
+[submodule "Dix/Vendor/assimp"]
+	path = Dix/Vendor/assimp
+	url = https://github.com/AminAliari/assimp.git
+[submodule "Dix/Vendor/glm"]
+	path = Dix/Vendor/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "Dix/Vendor/spdlog"]
+	path = Dix/Vendor/spdlog
+	url = https://github.com/gabime/spdlog.git
