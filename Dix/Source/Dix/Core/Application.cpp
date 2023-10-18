@@ -38,11 +38,19 @@ namespace Dix
 
         SharedPtr<Texture2D> texture = Texture2D::Create("C:/Users/1vvvi/Desktop/papka_for_papok/backgrounds/МояДевушка.jpg", true);
 
-        FramebufferSpecification framebufferSpec;
-        framebufferSpec.Width = 1280;
-        framebufferSpec.Height = 720;
-        framebufferSpec.Attachments = { FramebufferTextureFormat::RGBA16F, FramebufferTextureFormat::DEPTH24_STENCIL8 };
-        SharedPtr<Framebuffer> framebuffer = Framebuffer::Create(framebufferSpec);
+        FramebufferSpecification fSpec;
+        fSpec.Width = 1280;
+        fSpec.Height = 720;
+        fSpec.Samples = 4;
+        fSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::DEPTH24_STENCIL8 };
+        SharedPtr<Framebuffer> framebuffer = Framebuffer::Create(fSpec);
+
+        FramebufferSpecification resolveFSpec;
+        resolveFSpec.Width = 1280;
+        resolveFSpec.Height = 720;
+        resolveFSpec.Samples = 1;
+        resolveFSpec.Attachments = { FramebufferTextureFormat::RGBA8 };
+        SharedPtr<Framebuffer> resolveFramebuffer = Framebuffer::Create(resolveFSpec);
 
         float vertices[] = {
             // positions          // colors           // texture coords
@@ -111,9 +119,11 @@ namespace Dix
 
                 framebuffer->Unbind();
 
+                framebuffer->BlitTo(resolveFramebuffer, 0, 0);
+
                 tonemappingShader->Bind();
 
-                glBindTextureUnit(0, framebuffer->GetColorAttachmentID(0));
+                glBindTextureUnit(0, resolveFramebuffer->GetColorAttachmentID(0));
                 glBindVertexArray(emptyVao);
                 glDrawArrays(GL_TRIANGLES, 0, 3);
 

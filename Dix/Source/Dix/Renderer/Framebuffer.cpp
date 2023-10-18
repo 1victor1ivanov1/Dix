@@ -119,7 +119,7 @@ namespace Dix
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
-		bool multisampled = m_Specification.Samples > 0;
+		bool multisampled = m_Specification.Samples > 1;
 
 		if (m_ColorAttachmentSpecifications.size() > 0)
 		{
@@ -160,6 +160,18 @@ namespace Dix
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	}
+
+	void Framebuffer::BlitTo(SharedPtr<Framebuffer> other, uint32_t inID, uint32_t outID)
+	{
+		DIX_CORE_ASSERT(inID < m_ColorAttachments.size() && outID < other->GetColorAttachmentSpeifications().size(), "Invalid blitting IDs!");
+		uint32_t src_w = m_Specification.Width, src_h = m_Specification.Height;
+		uint32_t dst_w = other->GetSpecification().Width, dst_h = other->GetSpecification().Height;
+
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, other->GetRendererID());
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_RendererID);
+		glBlitNamedFramebuffer(m_RendererID, other->GetRendererID(), 0, 0, src_w, src_h, 0, 0, dst_w, dst_h, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	void Framebuffer::Bind() const
