@@ -10,3 +10,6 @@
 [submodule "Dix/Vendor/spdlog"]
 	path = Dix/Vendor/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "Dix/Vendor/ImGui"]
+	path = Dix/Vendor/ImGui
+	url = https://github.com/TheCherno/imgui.git
