@@ -8,6 +8,6 @@ namespace Dix
 			Time() = delete;
 			~Time() = delete;
 
-			static float GetTime();
+			static f32 GetTime();
 	};
 }

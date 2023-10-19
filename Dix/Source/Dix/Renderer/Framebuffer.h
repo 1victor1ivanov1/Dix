@@ -39,8 +39,8 @@ namespace Dix
 
 	struct FramebufferSpecification
 	{
-		uint32_t Width = 1, Height = 1;
-		uint32_t Samples = 1;
+		u32 Width = 1, Height = 1;
+		u32 Samples = 1;
 		
 		FramebufferAttachmentSpecification Attachments;
 	};
@@ -53,12 +53,12 @@ namespace Dix
 
 		void Invalidate();
 
-		void BlitTo(SharedPtr<Framebuffer> other, uint32_t inID, uint32_t outID);
+		void BlitTo(SharedPtr<Framebuffer> other);
 
 		const FramebufferSpecification& GetSpecification() const { return m_Specification; }
 		const std::vector<FramebufferTextureSpecification>& GetColorAttachmentSpeifications() const { return m_ColorAttachmentSpecifications; }
-		uint32_t GetRendererID() const { return m_RendererID; }
-		uint32_t GetColorAttachmentID(uint32_t index) const { DIX_CORE_ASSERT(index < m_ColorAttachments.size());  return m_ColorAttachments[index]; }
+		u32 GetRendererID() const { return m_RendererID; }
+		u32 GetColorAttachmentID(u32 index) const { DIX_CORE_ASSERT(index < m_ColorAttachments.size());  return m_ColorAttachments[index]; }
 
 		void Bind() const;
 		void Unbind() const;
@@ -67,12 +67,12 @@ namespace Dix
 
 	private:
 		FramebufferSpecification m_Specification;
-		uint32_t m_RendererID = 0;
+		u32 m_RendererID = 0;
 
 		std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecifications;
-		std::vector<uint32_t> m_ColorAttachments;
+		std::vector<u32> m_ColorAttachments;
 
 		FramebufferTextureSpecification m_DepthAttachmentSpecification = FramebufferTextureFormat::None;
-		uint32_t m_DepthAttachment = 0;
+		u32 m_DepthAttachment = 0;
 	};
 }

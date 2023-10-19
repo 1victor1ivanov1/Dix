@@ -9,12 +9,12 @@ namespace Dix
 				: m_Time(time)
 			{}
 
-			operator float() const { return m_Time; }
+			operator f32() const { return m_Time; }
 
-			float GetSeconds() const { return m_Time; }
-			float GetMilliseconds() const { return m_Time * 1000.f; }
+			f32 GetSeconds() const { return m_Time; }
+			f32 GetMilliseconds() const { return m_Time * 1000.f; }
 
 		private:
-			float m_Time;
+			f32 m_Time;
 	};
 }

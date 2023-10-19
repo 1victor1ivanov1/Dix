@@ -18,7 +18,7 @@ namespace Dix
 		Mat4,
 	};
 
-	static uint32_t ShaderTypeSize(ShaderDataType type)
+	static u32 ShaderTypeSize(ShaderDataType type)
 	{
 		switch (type)
 		{
@@ -43,8 +43,8 @@ namespace Dix
 	{
 		std::string Name;
 		ShaderDataType Type;
-		uint32_t Size;
-		uint32_t Offset;
+		u32 Size;
+		u32 Offset;
 		bool Normalized;
 
 		BufferElement() = default;
@@ -87,7 +87,7 @@ namespace Dix
 			CalculateOffsetAndStride();
 		}
 
-		uint32_t GetStride() const { return m_Stride; }
+		u32 GetStride() const { return m_Stride; }
 		const std::vector<BufferElement>& GetElements() const { return m_Elements; }
 
 		std::vector<BufferElement>::iterator begin() { return m_Elements.begin(); }
@@ -107,47 +107,47 @@ namespace Dix
 
 	private:
 		std::vector<BufferElement> m_Elements;
-		uint32_t m_Stride = 0;
+		u32 m_Stride = 0;
 	};
 
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(uint32_t size);
-		VertexBuffer(float* vertices, uint32_t size);
+		VertexBuffer(u32 size);
+		VertexBuffer(f32* vertices, u32 size);
 		~VertexBuffer();
 
 		void Bind() const;
 		void Unbind() const;
 
-		void SetData(const void* data, uint32_t size);
+		void SetData(const void* data, u32 size);
 
 		const BufferLayout& GetLayout() const { return m_Layout; }
 		void SetLayout(const BufferLayout& layout) { m_Layout = layout; }
 
-		static SharedPtr<VertexBuffer> Create(uint32_t size);
-		static SharedPtr<VertexBuffer> Create(float* vertices, uint32_t size);
+		static SharedPtr<VertexBuffer> Create(u32 size);
+		static SharedPtr<VertexBuffer> Create(f32* vertices, u32 size);
 
 	private:
 		BufferLayout m_Layout;
-		uint32_t m_RendererID = 0;
+		u32 m_RendererID = 0;
 	};
 
 	class IndexBuffer
 	{
 	public:
-		IndexBuffer(uint32_t* indices, uint32_t size);
+		IndexBuffer(u32* indices, u32 size);
 		~IndexBuffer();
 
 		void Bind() const;
 		void Unbind() const;
 
-		uint32_t GetCount() const { return m_Count; }
+		u32 GetCount() const { return m_Count; }
 
-		static SharedPtr<IndexBuffer> Create(uint32_t* indices, uint32_t size);
+		static SharedPtr<IndexBuffer> Create(u32* indices, u32 size);
 
 	private:
-		uint32_t m_RendererID = 0;
-		uint32_t m_Count = 0;
+		u32 m_RendererID = 0;
+		u32 m_Count = 0;
 	};
 }

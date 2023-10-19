@@ -7,14 +7,14 @@
 namespace Dix
 {
 	// Vertex Buffer
-	VertexBuffer::VertexBuffer(uint32_t size)
+	VertexBuffer::VertexBuffer(u32 size)
 	{
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 	}
 
-	VertexBuffer::VertexBuffer(float* vertices, uint32_t size)
+	VertexBuffer::VertexBuffer(f32* vertices, u32 size)
 	{
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
@@ -36,29 +36,29 @@ namespace Dix
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	void VertexBuffer::SetData(const void* data, uint32_t size)
+	void VertexBuffer::SetData(const void* data, u32 size)
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}
 
-	SharedPtr<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	SharedPtr<VertexBuffer> VertexBuffer::Create(u32 size)
 	{
 		return MakeShared<VertexBuffer>(size);
 	}
 
-	SharedPtr<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size)
+	SharedPtr<VertexBuffer> VertexBuffer::Create(f32* vertices, u32 size)
 	{
 		return MakeShared<VertexBuffer>(vertices, size);
 	}
 
 	// Index Buffer
-	IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t size)
+	IndexBuffer::IndexBuffer(u32* indices, u32 size)
 		: m_Count(size)
 	{
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, size * sizeof(u32), indices, GL_STATIC_DRAW);
 	}
 
 	IndexBuffer::~IndexBuffer()
@@ -76,7 +76,7 @@ namespace Dix
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	SharedPtr<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t size)
+	SharedPtr<IndexBuffer> IndexBuffer::Create(u32* indices, u32 size)
 	{
 		return MakeShared<IndexBuffer>(indices, size);
 	}

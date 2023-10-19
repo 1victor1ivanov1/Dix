@@ -12,14 +12,14 @@ namespace Dix
 	{
 		stbi_set_flip_vertically_on_load(true);
 
-		int32_t width, height, channels;
+		i32 width, height, channels;
 		stbi_uc* data = nullptr;
 		data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
 
 		if (data)
 		{
-			m_Specification.Width = width;
-			m_Specification.Height = height;
+			m_Width = width;
+			m_Height = height;
 
 			GLenum internalFormat = 0, dataFormat = 0;
 
@@ -68,7 +68,7 @@ namespace Dix
 		glDeleteTextures(1, &m_RendererID);
 	}
 
-	void Texture2D::Bind(uint32_t slot) const
+	void Texture2D::Bind(u32 slot) const
 	{
 		DIX_CORE_ASSERT(slot < 16, "Invalid slot number!");
 		glBindTextureUnit(slot, m_RendererID);

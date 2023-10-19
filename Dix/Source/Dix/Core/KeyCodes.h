@@ -4,7 +4,7 @@
 
 namespace Dix
 {
-	using KeyCode = uint16_t;
+	using KeyCode = u16;
 
 	namespace Key
 	{

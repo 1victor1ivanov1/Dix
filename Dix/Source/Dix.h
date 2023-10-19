@@ -5,6 +5,7 @@
 #include "Dix/Core/Base.h"
 
 #include "Dix/Core/Application.h"
+#include "Dix/Core/Layer.h"
 #include "Dix/Core/Log.h"
 #include "Dix/Core/Assert.h"
 
@@ -20,8 +21,6 @@
 //#include "Dix/Scene/Entity.h"
 //#include "Dix/Scene/ScriptableEntity.h"
 //#include "Dix/Scene/Components.h"
-
-//#include "Dix/Project/Project.h"
 
 // ---Renderer------------------------
 //#include "Dix/Renderer/Renderer.h"

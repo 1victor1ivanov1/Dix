@@ -32,6 +32,11 @@ namespace Dix
 		glfwPollEvents();
 	}
 
+	void* Window::GetNativeWindow()
+	{
+		return m_Window;
+	}
+
 	void Window::SetEventCallback(const EventCallbackFn& callback)
 	{
 		m_Data.Callback = callback;
@@ -53,7 +58,7 @@ namespace Dix
 
 	void Window::Init()
 	{
-		int success = glfwInit();
+		i32 success = glfwInit();
 		DIX_CORE_ASSERT(success, "Failed to init GLFW!");
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -77,7 +82,7 @@ namespace Dix
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 
-		glfwSetErrorCallback([](int error, const char* discription) 
+		glfwSetErrorCallback([](i32 error, const char* discription) 
 		{
 			DIX_CORE_ERROR("GLFW Error occured ({0}): {1}", error, discription);
 		});
@@ -89,7 +94,7 @@ namespace Dix
 			data->Callback(event);
 		});
 
-		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, i32 width, i32 height)
 		{
 			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 			WindowResizeEvent event(width, height);

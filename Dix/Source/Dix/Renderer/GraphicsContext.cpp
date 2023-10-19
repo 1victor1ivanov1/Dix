@@ -22,7 +22,7 @@ namespace Dix
 	void GraphicsContext::Init()
 	{
 		glfwMakeContextCurrent(m_WindowHandle);
-		int success = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		i32 success = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		DIX_CORE_ASSERT(success, "Failed to init OpengGL!");
 
 		DIX_CORE_INFO("OpenGL Info:");

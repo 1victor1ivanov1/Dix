@@ -6,7 +6,7 @@
 
 namespace Dix
 {
-	static const uint32_t s_MaxFramebufferSize = 8192;
+	static const u32 s_MaxFramebufferSize = 8192;
 
 	namespace Utils
 	{
@@ -35,7 +35,7 @@ namespace Dix
 			return 0;
 		}
 
-		static uint32_t TextureTarget(bool multisampled)
+		static u32 TextureTarget(bool multisampled)
 		{
 			return multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 		}
@@ -50,7 +50,7 @@ namespace Dix
 			glBindTexture(TextureTarget(multisampled), texture);
 		}
 
-		static void AttachColorTexture(uint32_t texture, int samples, GLenum format, int index, uint32_t width, uint32_t height)
+		static void AttachColorTexture(uint32_t texture, i32 samples, GLenum format, i32 index, u32 width, u32 height)
 		{
 			bool multisampled = samples > 1;
 			if (multisampled)
@@ -71,7 +71,7 @@ namespace Dix
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multisampled), texture, 0);
 		}
 
-		static void AttachDepthTexture(uint32_t texture, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
+		static void AttachDepthTexture(uint32_t texture, i32 samples, GLenum format, GLenum attachmentType, u32 width, u32 height)
 		{
 			bool multisampled = samples > 1;
 			if (multisampled)
@@ -126,7 +126,7 @@ namespace Dix
 			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
 			Utils::CreateTextures(multisampled, &m_ColorAttachments[0], m_ColorAttachments.size());
 
-			for (int i = 0; i < m_ColorAttachments.size(); ++i)
+			for (i32 i = 0; i < m_ColorAttachments.size(); ++i)
 			{
 				Utils::BindTexture(multisampled, m_ColorAttachments[i]);
 				Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, Utils::DixTextureFormatToOpenGLFormat(m_ColorAttachmentSpecifications[i].TextureFormat), i, m_Specification.Width, m_Specification.Height);
@@ -162,15 +162,14 @@ namespace Dix
 
 	}
 
-	void Framebuffer::BlitTo(SharedPtr<Framebuffer> other, uint32_t inID, uint32_t outID)
+	void Framebuffer::BlitTo(SharedPtr<Framebuffer> other)
 	{
-		DIX_CORE_ASSERT(inID < m_ColorAttachments.size() && outID < other->GetColorAttachmentSpeifications().size(), "Invalid blitting IDs!");
-		uint32_t src_w = m_Specification.Width, src_h = m_Specification.Height;
-		uint32_t dst_w = other->GetSpecification().Width, dst_h = other->GetSpecification().Height;
+		u32 src_w = m_Specification.Width, src_h = m_Specification.Height;
+		u32 dst_w = other->GetSpecification().Width, dst_h = other->GetSpecification().Height;
 
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, other->GetRendererID());
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_RendererID);
-		glBlitNamedFramebuffer(m_RendererID, other->GetRendererID(), 0, 0, src_w, src_h, 0, 0, dst_w, dst_h, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		glBlitFramebuffer(0, 0, src_w, src_h, 0, 0, dst_w, dst_h, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 

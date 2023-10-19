@@ -31,8 +31,8 @@ namespace Dix
 		auto shaderSources = Preprocess(source);
 		CompileProgram(shaderSources);
 
-		size_t lastSlash = filepath.find_last_of("/\\");
-		size_t lastDot = filepath.rfind(".");
+		u64 lastSlash = filepath.find_last_of("/\\");
+		u64 lastDot = filepath.rfind(".");
 		m_Name = filepath.substr(lastSlash + 1, lastDot - lastSlash - 1);
 	}
 
@@ -64,7 +64,7 @@ namespace Dix
 		if (file)
 		{
 			file.seekg(0, std::ios::end);
-			size_t length = file.tellg();
+			u64 length = file.tellg();
 
 			if (length != -1)
 			{
@@ -84,23 +84,23 @@ namespace Dix
 
 		return result;
 	}
-	std::unordered_map<uint32_t, std::string> Dix::Shader::Preprocess(const std::string& source)
+	std::unordered_map<u32, std::string> Dix::Shader::Preprocess(const std::string& source)
 	{
 		std::unordered_map<GLenum, std::string> result;
 
 		const char* typeToken = "#type";
-		size_t typeTokenLen = strlen(typeToken);
-		size_t pos = source.find(typeToken);
+		u64 typeTokenLen = strlen(typeToken);
+		u64 pos = source.find(typeToken);
 
 		while (pos != std::string::npos)
 		{
-			size_t eol = source.find_first_of("\r\n", pos);
+			u64 eol = source.find_first_of("\r\n", pos);
 			DIX_CORE_ASSERT(eol != std::string::npos, "Syntax error!");
-			size_t begin = pos + typeTokenLen + 1;
+			u64 begin = pos + typeTokenLen + 1;
 			std::string type = source.substr(begin, eol - begin);
 			DIX_CORE_ASSERT(Utils::ShaderTypeFromString(type), "Invalid shader type specified!");
 
-			size_t nextLinePos = source.find_first_of("\r\n", eol);
+			u64 nextLinePos = source.find_first_of("\r\n", eol);
 			DIX_CORE_ASSERT(nextLinePos != std::string::npos, "Syntax error!");
 			pos = source.find(typeToken, nextLinePos);
 
@@ -109,45 +109,49 @@ namespace Dix
 
 		return result;
 	}
-	void Dix::Shader::CompileProgram(std::unordered_map<GLenum, std::string>& sources)
+	void Dix::Shader::CompileProgram(std::unordered_map<u32, std::string>& sources)
 	{
-		uint32_t program = glCreateProgram();
+		u32 program = glCreateProgram();
 
-		std::vector<uint32_t> shaderIDs;
+		std::vector<u32> shaders;
 		for (auto& [type, source] : sources)
 		{
 			const char* sourceCode = source.c_str();
-			uint32_t shaderID = shaderIDs.emplace_back(glCreateShader(type));
-			glShaderSource(shaderID, 1, &sourceCode, NULL);
-			glCompileShader(shaderID);
+			u32 shader = shaders.emplace_back(glCreateShader(type));
+			glShaderSource(shader, 1, &sourceCode, NULL);
+			glCompileShader(shader);
 
-			int status;
-			char infoLog[1024];
-			glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
+			i32 status;
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 			if (status == GL_FALSE)
 			{
-				glGetShaderInfoLog(shaderID, 1024, nullptr, infoLog);
-				DIX_CORE_ERROR("Shader compiling error ({0}): {1}", m_Filepath, infoLog);
+				i32 length;
+				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+				std::vector<GLchar >infoLog(length);
+				glGetShaderInfoLog(shader, length, &length, infoLog.data());
+				DIX_CORE_ERROR("Shader compiling error ({0}): {1}", m_Filepath, infoLog.data());
 			}
-			glAttachShader(program, shaderID);
+			glAttachShader(program, shader);
 		}
 
 		glLinkProgram(program);
 
-		int status;
-		char infoLog[1024];
+		i32 status;
 		glGetProgramiv(program, GL_LINK_STATUS, &status);
 		if (status == GL_FALSE)
 		{
-			glGetProgramInfoLog(program, 1024, nullptr, infoLog);
-			DIX_CORE_ERROR("Shader linking error ({0}): {1}", m_Filepath, infoLog);
+			i32 length;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
+			std::vector<GLchar >infoLog(length);
+			glGetProgramInfoLog(program, 1024, nullptr, infoLog.data());
+			DIX_CORE_ERROR("Shader linking error ({0}): {1}", m_Filepath, infoLog.data());
 			glDeleteProgram(program);
 		}
 
-		for (auto shaderID : shaderIDs)
+		for (auto shader : shaders)
 		{
-			glDetachShader(program, shaderID);
-			glDeleteShader(shaderID);
+			glDetachShader(program, shader);
+			glDeleteShader(shader);
 		}
 
 		m_RendererID = program;

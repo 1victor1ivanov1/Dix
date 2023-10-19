@@ -2,6 +2,7 @@
 
 #include "Dix/Core/Window.h"
 #include "Dix/Core/Timestep.h"
+#include "Dix/Core/LayerStack.h"
 
 #include "Dix/Events/Event.h"
 #include "Dix/Events/ApplicationEvent.h"
@@ -10,10 +11,10 @@ namespace Dix
 {
 	struct ApplicationCommandLineArgs
 	{
-		int Size = 0;
+		i32 Size = 0;
 		char** Args = nullptr;
 
-		const char* operator[](int index)
+		const char* operator[](i32 index)
 		{
 			DIX_CORE_ASSERT(index < Size);
 			return Args[index];
@@ -43,6 +44,9 @@ namespace Dix
 
 		void Run();
 
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* overlay);
+
 		void OnEvent(Event& event);
 
 		void* GetNativeWindow() const { return m_Window->GetNativeWindow(); }
@@ -62,7 +66,10 @@ namespace Dix
 
 		UniquePtr<Window> m_Window;
 
-		bool m_Running = true, m_Minimized = false;
+		LayerStack m_LayerStack;
+
+		bool m_Running = true;
+		bool m_Minimized = false;
 		float m_LastFrameTime = 0.0f;
 
 	private:

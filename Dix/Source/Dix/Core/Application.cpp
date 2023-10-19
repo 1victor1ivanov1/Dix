@@ -5,6 +5,7 @@
 #include "Dix/Renderer/Shader.h"
 #include "Dix/Renderer/Texture.h"
 #include "Dix/Renderer/VertexArray.h"
+#include "Dix/Renderer/Framebuffer.h"
 #include "Dix/Renderer/RenderCommand.h"
 
 #include "Dix/Utils/PlatformUtils.h"
@@ -12,7 +13,7 @@
 #include <glad/glad.h>
 
 //for testing
-#include "Dix/Renderer/Framebuffer.h"
+#include "Dix/Core/TestLayer.h"
 
 namespace Dix
 {
@@ -24,6 +25,9 @@ namespace Dix
         m_Specification = spec;
 
         Init();
+
+        Layer* testLayer = new TestLayer();
+        PushLayer(testLayer);
     }
 
     Application::~Application()
@@ -33,66 +37,6 @@ namespace Dix
 
     void Application::Run()
     {
-        SharedPtr<Shader> shader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/test.glsl");
-        SharedPtr<Shader> tonemappingShader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/Tonemapping.glsl");
-
-        SharedPtr<Texture2D> texture = Texture2D::Create("C:/Users/1vvvi/Desktop/papka_for_papok/backgrounds/МояДевушка.jpg", true);
-
-        FramebufferSpecification fSpec;
-        fSpec.Width = 1280;
-        fSpec.Height = 720;
-        fSpec.Samples = 4;
-        fSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::DEPTH24_STENCIL8 };
-        SharedPtr<Framebuffer> framebuffer = Framebuffer::Create(fSpec);
-
-        FramebufferSpecification resolveFSpec;
-        resolveFSpec.Width = 1280;
-        resolveFSpec.Height = 720;
-        resolveFSpec.Samples = 1;
-        resolveFSpec.Attachments = { FramebufferTextureFormat::RGBA8 };
-        SharedPtr<Framebuffer> resolveFramebuffer = Framebuffer::Create(resolveFSpec);
-
-        float vertices[] = {
-            // positions          // colors           // texture coords
-             0.5f,  0.5f, 0.0f,       // top right
-             0.5f, -0.5f, 0.0f,       // bottom right
-            -0.5f, -0.5f, 0.0f,      // bottom left
-            -0.5f,  0.5f, 0.0f,        // top left 
-        };
-        float texCoords[] = {
-             1.0f, 1.0f,
-             1.0f, 0.0f,
-             0.0f, 0.0f,
-             0.0f, 1.0f
-        };
-        unsigned int indices[] = {
-            0, 1, 3, // first triangle
-            1, 2, 3  // second triangle
-        };
-
-        SharedPtr<VertexBuffer> vertexBuffer1;
-        SharedPtr<VertexBuffer> vertexBuffer2;
-        SharedPtr<IndexBuffer> indexBuffer;
-
-        vertexBuffer1 = VertexBuffer::Create(vertices, sizeof(vertices));
-        vertexBuffer1->SetLayout({
-            { ShaderDataType::Float3, "a_Position" }
-        });
-        vertexBuffer2 = VertexBuffer::Create(texCoords, sizeof(texCoords));
-        vertexBuffer2->SetLayout({
-            { ShaderDataType::Float2, "a_TexCoords" }
-        });
-        indexBuffer = IndexBuffer::Create(indices, 6);
-
-        SharedPtr<VertexArray> vertexArray = VertexArray::Create();
-        SharedPtr<VertexArray> tonemappingVertexArray = VertexArray::Create();
-
-        vertexArray->AddVertexBuffer(vertexBuffer1);
-        vertexArray->AddVertexBuffer(vertexBuffer2);
-        vertexArray->SetIndexBuffer(indexBuffer);
-
-        uint32_t emptyVao;
-        glCreateVertexArrays(1, &emptyVao);
 
         while (m_Running)
         {
@@ -105,33 +49,31 @@ namespace Dix
 
             if (!m_Minimized)
             {
-                framebuffer->Bind();
+                for (auto layer : m_LayerStack)
+                {
+                    layer->OnUpdate(timestep);
+                }
 
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
-                shader->Bind();
-                texture->Bind();
-
-                RenderCommand::DrawIndexed(vertexArray);
-
-                shader->Unbind();
-
-                framebuffer->Unbind();
-
-                framebuffer->BlitTo(resolveFramebuffer, 0, 0);
-
-                tonemappingShader->Bind();
-
-                glBindTextureUnit(0, resolveFramebuffer->GetColorAttachmentID(0));
-                glBindVertexArray(emptyVao);
-                glDrawArrays(GL_TRIANGLES, 0, 3);
-
-                tonemappingShader->Unbind();
+                for (auto layer : m_LayerStack)
+                {
+                    layer->OnImGuiRender();
+                }
             }
 
             m_Window->OnUpdate();
         }
+    }
+
+    void Application::PushLayer(Layer* layer)
+    {
+        m_LayerStack.PushLayer(layer);
+        layer->OnAttach();
+    }
+
+    void Application::PushOverlay(Layer* overlay)
+    {
+        m_LayerStack.PushOverlay(overlay);
+        overlay->OnAttach();
     }
 
     void Application::OnEvent(Event& event)
@@ -139,6 +81,13 @@ namespace Dix
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<WindowCloseEvent>(DIX_BIND_EVENT_CALLBACK(Application::OnWindowClose));
         dispatcher.Dispatch<WindowResizeEvent>(DIX_BIND_EVENT_CALLBACK(Application::OnWindowResize));
+
+        for (auto it = m_LayerStack.rbegin(); it != m_LayerStack.rend(); ++it)
+        {
+            if (event.Handled)
+                break;
+            (*it)->OnEvent(event);
+        }
     }
 
     void Application::Init()
@@ -161,7 +110,7 @@ namespace Dix
     {
         m_Running = false;
 
-        return false;
+        return true;
     }
 
     bool Application::OnWindowResize(WindowResizeEvent& event)
@@ -173,7 +122,7 @@ namespace Dix
         }
 
         m_Minimized = false;
-        glViewport(0, 0, event.GetWidth(), event.GetHeight());
+        RenderCommand::SetViewport(0, 0, event.GetWidth(), event.GetHeight());
 
         return false;
     }

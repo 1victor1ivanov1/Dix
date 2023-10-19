@@ -24,8 +24,8 @@ namespace Dix
 		static SharedPtr<VertexArray> Create();
 
 	private:
-		uint32_t m_RendererID = 0;
-		uint32_t m_VertexBufferIndex = 0;
+		u32 m_RendererID = 0;
+		u32 m_VertexBufferIndex = 0;
 		std::vector<SharedPtr<VertexBuffer>> m_VertexBuffers;
 		SharedPtr<IndexBuffer> m_IndexBuffer;
 	};

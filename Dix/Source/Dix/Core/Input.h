@@ -19,7 +19,7 @@ namespace Dix
 
 		static glm::vec2 GetMousePosition();
 
-		static float GetMouseX() { return GetMousePosition().x; }
-		static float GetMouseY() { return GetMousePosition().y; }
+		static f32 GetMouseX() { return GetMousePosition().x; }
+		static f32 GetMouseY() { return GetMousePosition().y; }
 	};
 }

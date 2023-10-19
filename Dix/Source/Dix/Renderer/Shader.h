@@ -20,11 +20,11 @@ namespace Dix
 
 	private:
 		std::string ReadFile();
-		std::unordered_map<uint32_t, std::string> Preprocess(const std::string& source);
-		void CompileProgram(std::unordered_map<uint32_t, std::string>& sources);
+		std::unordered_map<u32, std::string> Preprocess(const std::string& source);
+		void CompileProgram(std::unordered_map<u32, std::string>& sources);
 
 	private:
-		uint32_t m_RendererID = 0;
+		u32 m_RendererID = 0;
 
 		std::string m_Filepath, m_Name;
 	};

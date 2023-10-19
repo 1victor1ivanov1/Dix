@@ -11,10 +11,10 @@ namespace Dix
 
 	struct WindowProperties
 	{
-		uint32_t Width, Height;
+		u32 Width, Height;
 		std::string Name;
 
-		WindowProperties(const std::string& name = "Dix", uint32_t width = 1280, uint32_t height = 720) : Name(name), Width(width), Height(height) {}
+		WindowProperties(const std::string& name = "Dix", u32 width = 1280, u32 height = 720) : Name(name), Width(width), Height(height) {}
 	};
 
 	class Window
@@ -28,8 +28,10 @@ namespace Dix
 
 		void OnUpdate();
 
-		uint32_t GetWidth() const { return m_Data.Width; }
-		uint32_t GetHeight() const { return m_Data.Height; }
+		u32 GetWidth() const { return m_Data.Width; }
+		u32 GetHeight() const { return m_Data.Height; }
+
+		void* GetNativeWindow();
 
 		void SetEventCallback(const EventCallbackFn& callback);
 		void SetVSync(bool enable);
@@ -49,7 +51,7 @@ namespace Dix
 
 		struct WindowData
 		{
-			uint32_t Width, Height;
+			u32 Width, Height;
 			std::string Name;
 			bool VSync;
 

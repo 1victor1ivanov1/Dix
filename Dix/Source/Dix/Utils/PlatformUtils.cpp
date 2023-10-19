@@ -5,7 +5,7 @@
 
 namespace Dix
 {
-	float Time::GetTime()
+	f32 Time::GetTime()
 	{
 		return glfwGetTime();
 	}

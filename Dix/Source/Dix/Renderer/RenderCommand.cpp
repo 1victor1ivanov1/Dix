@@ -9,7 +9,7 @@ namespace Dix
 {
 	static void APIENTRY glDebugOutput(GLenum source,
 		GLenum type,
-		unsigned int id,
+		u32 id,
 		GLenum severity,
 		GLsizei length,
 		const char* message,
@@ -69,7 +69,7 @@ namespace Dix
 		glEnable(GL_LINE_SMOOTH);
 	}
 
-	void RenderCommand::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	void RenderCommand::SetViewport(u32 x, u32 y, u32 width, u32 height)
 	{
 		glViewport(x, y, width, height);
 	}
@@ -84,11 +84,28 @@ namespace Dix
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void RenderCommand::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, uint32_t indexCount)
+	void RenderCommand::EnableDepthTest()
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+
+	void RenderCommand::DisableDepthTest()
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+
+	void RenderCommand::DrawIndexed(const SharedPtr<VertexArray>& vertexArray, u32 indexCount)
 	{
 		vertexArray->Bind();
-		uint32_t count = indexCount == 0 ? vertexArray->GetIndexBuffer()->GetCount() : indexCount;
+		u32 count = indexCount == 0 ? vertexArray->GetIndexBuffer()->GetCount() : indexCount;
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
+		vertexArray->Unbind();
+	}
+
+	void RenderCommand::DrawArrays(const SharedPtr<VertexArray>& vertexArray, u32 vertexCount)
+	{
+		vertexArray->Bind();
+		glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 		vertexArray->Unbind();
 	}
 }

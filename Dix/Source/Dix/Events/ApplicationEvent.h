@@ -18,12 +18,12 @@ namespace Dix
 	class WindowResizeEvent : public Event
 	{
 	public:
-		WindowResizeEvent(int width, int height)
+		WindowResizeEvent(i32 width, i32 height)
 			: m_Width(width), m_Height(height)
 		{}
 
-		int GetWidth() const { return m_Width; }
-		int GetHeight() const { return m_Height; }
+		i32 GetWidth() const { return m_Width; }
+		i32 GetHeight() const { return m_Height; }
 
 		virtual std::string ToString() const override
 		{
@@ -36,6 +36,6 @@ namespace Dix
 		EVENT_CLASS_CATEGORY(EventCategoryWindow)
 
 	private:
-		int m_Width, m_Height;
+		i32 m_Width, m_Height;
 	};
 }

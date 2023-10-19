@@ -2,7 +2,7 @@
 
 namespace
 {
-	using MouseCode = uint16_t;
+	using MouseCode = u16;
 
 	namespace Mouse
 	{
