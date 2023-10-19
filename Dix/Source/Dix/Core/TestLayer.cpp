@@ -4,6 +4,8 @@
 
 #include "Dix/Renderer/RenderCommand.h"
 
+#include "Dix/Utils/PlatformUtils.h"
+
 #include <glad/glad.h>
 
 namespace Dix
@@ -13,7 +15,7 @@ namespace Dix
 		shader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/test.glsl");
 		tonemappingShader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/Tonemapping.glsl");
 
-		texture = Texture2D::Create("C:/Users/1vvvi/Desktop/papka_for_papok/backgrounds/МояДевушка.jpg", true);
+		texture = Texture2D::Create("C:/Users/1vvvi/Desktop/papka_for_papok/backgrounds/крутой куджицу.png", true);
 
 		FramebufferSpecification fSpec;
 		fSpec.Width = 1280;
@@ -30,48 +32,63 @@ namespace Dix
 		resolveFramebuffer = Framebuffer::Create(resolveFSpec);
 
 		float vertices[] = {
-			// positions          // colors           // texture coords
-			 0.5f,  0.5f, 0.0f,       // top right
-			 0.5f, -0.5f, 0.0f,       // bottom right
-			-0.5f, -0.5f, 0.0f,      // bottom left
-			-0.5f,  0.5f, 0.0f,        // top left 
-		};
-		float texCoords[] = {
-			 1.0f, 1.0f,
-			 1.0f, 0.0f,
-			 0.0f, 0.0f,
-			 0.0f, 1.0f
-		};
-		float vertices2[] = {
-			1.0f, 3.0f,
-			-3.0f, -1.0f,
-			1.0f, -1.0f,
-		};
-		unsigned int indices[] = {
-			0, 1, 3, // first triangle
-			1, 2, 3  // second triangle
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 		};
 
-		SharedPtr<VertexBuffer> vertexBuffer1;
-		SharedPtr<VertexBuffer> vertexBuffer2;
+		SharedPtr<VertexBuffer> vertexBuffer;
 		SharedPtr<IndexBuffer> indexBuffer;
 
-		vertexBuffer1 = VertexBuffer::Create(vertices, sizeof(vertices));
-		vertexBuffer1->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" }
-			});
-		vertexBuffer2 = VertexBuffer::Create(texCoords, sizeof(texCoords));
-		vertexBuffer2->SetLayout({
-			{ ShaderDataType::Float2, "a_TexCoords" }
-			});
-		indexBuffer = IndexBuffer::Create(indices, 6);
+		vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+		vertexBuffer->SetLayout({
+			{ ShaderDataType::Float3, "a_Position" },
+			{ ShaderDataType::Float2, "a_TexCoords" },
+		});
 
 		vertexArray = VertexArray::Create();
 		tonemappingVertexArray = VertexArray::Create();
 
-		vertexArray->AddVertexBuffer(vertexBuffer1);
-		vertexArray->AddVertexBuffer(vertexBuffer2);
-		vertexArray->SetIndexBuffer(indexBuffer);
+		vertexArray->AddVertexBuffer(vertexBuffer);
+		camera = Camera(45.f, 1280.f / 720.f, 0.1f, 100.f);
 	}
 
 	void TestLayer::OnDetach()
@@ -81,32 +98,52 @@ namespace Dix
 
 	void TestLayer::OnUpdate(Timestep ts)
 	{
-		framebuffer->Bind();
+		camera.OnUpdate(ts);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		framebuffer->Bind();
+		RenderCommand::SetClearColor({ 0.2f, 0.3f, 0.3f, 1.0f });
+		RenderCommand::Clear();
+		RenderCommand::EnableDepthTest();
 
 		shader->Bind();
 		texture->Bind();
 
-		RenderCommand::DrawIndexed(vertexArray);
+		for (i32 i = 0; i < 10; i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			
+			shader->SetMat("u_ModelViewProjectionMatrix", camera.GetViewProjectionMatrix() * model);
 
+			RenderCommand::DrawArrays(vertexArray, 36);
+		}
+		
 		shader->Unbind();
-
 		framebuffer->Unbind();
 
 		framebuffer->BlitTo(resolveFramebuffer);
 
 		tonemappingShader->Bind();
-
 		glBindTextureUnit(0, resolveFramebuffer->GetColorAttachmentID(0));
 		RenderCommand::DrawArrays(tonemappingVertexArray, 3);
-
 		tonemappingShader->Unbind();
 	}
 
 	void TestLayer::OnEvent(Event& event)
 	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<WindowResizeEvent>(DIX_BIND_EVENT_CALLBACK(TestLayer::OnWindowResize));
 
+		camera.OnEvent(event);
+	}
+
+	bool TestLayer::OnWindowResize(WindowResizeEvent& event)
+	{
+		framebuffer->Resize(event.GetWidth(), event.GetHeight());
+		resolveFramebuffer->Resize(event.GetWidth(), event.GetHeight());
+
+		return false;
 	}
 }

@@ -25,7 +25,7 @@ namespace Dix
 												virtual EventType GetType() const override { return GetStaticType(); } \
 												virtual const char* GetName() const override { return #type; }
 
-#define EVENT_CLASS_CATEGORY(category) virtual EventCategory GetCategory() const override { return category; }
+#define EVENT_CLASS_CATEGORY(category) virtual i32 GetCategory() const override { return category; }
 
 	class Event
 	{
@@ -34,7 +34,7 @@ namespace Dix
 
 		virtual EventType GetType()	const			= 0;
 		virtual const char* GetName() const			= 0;	
-		virtual EventCategory GetCategory() const	= 0;
+		virtual i32 GetCategory() const	= 0;
 		virtual std::string ToString() const { return GetName(); }
 
 		bool IsInCategory(EventCategory category)

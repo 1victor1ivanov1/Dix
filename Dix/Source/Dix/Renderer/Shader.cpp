@@ -4,6 +4,8 @@
 
 #include <glad/glad.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 namespace Dix
 {
 	namespace Utils
@@ -49,6 +51,16 @@ namespace Dix
 	void Shader::Unbind() const
 	{
 		glUseProgram(0);
+	}
+
+	void Shader::SetMat(const std::string& name, const glm::mat3& mat)
+	{
+		glUniformMatrix3fv(glGetUniformLocation(m_RendererID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+	}
+
+	void Shader::SetMat(const std::string& name, const glm::mat4& mat)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(m_RendererID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
 	}
 
 	SharedPtr<Shader> Shader::Create(const std::string& filepath)

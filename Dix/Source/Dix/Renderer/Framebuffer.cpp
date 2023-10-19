@@ -116,8 +116,29 @@ namespace Dix
 
 	void Framebuffer::Invalidate()
 	{
+		if (m_RendererID)
+		{
+			glDeleteFramebuffers(1, &m_RendererID);
+			glDeleteTextures(m_ColorAttachments.size(), &m_ColorAttachments[0]);
+			glDeleteTextures(1, &m_DepthAttachment);
+
+			m_ColorAttachments.clear();
+			m_DepthAttachment = 0;
+		}
+
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+
+		if (m_Specification.Width > s_MaxFramebufferSize)
+		{
+			DIX_CORE_WARN("Framebuffer width({0}) if bigger than max framebuffer width({1}): width change to max value!", m_Specification.Width, s_MaxFramebufferSize);
+			m_Specification.Width = s_MaxFramebufferSize;
+		}
+		if (m_Specification.Height > s_MaxFramebufferSize)
+		{
+			DIX_CORE_WARN("Framebuffer height({0}) if bigger than max framebuffer height({1}): height change to max value!", m_Specification.Height, s_MaxFramebufferSize);
+			m_Specification.Height = s_MaxFramebufferSize;
+		}
 
 		bool multisampled = m_Specification.Samples > 1;
 
@@ -171,6 +192,19 @@ namespace Dix
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_RendererID);
 		glBlitFramebuffer(0, 0, src_w, src_h, 0, 0, dst_w, dst_h, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+	void Framebuffer::Resize(u32 width, u32 height)
+	{
+		if (width == 0 || height == 0)
+		{
+			DIX_CORE_WARN("Attempted to resize framebuffer to {0}, {1}!", width, height);
+			return;
+		}
+
+		m_Specification.Width = width;
+		m_Specification.Height = height;
+		Invalidate();
 	}
 
 	void Framebuffer::Bind() const

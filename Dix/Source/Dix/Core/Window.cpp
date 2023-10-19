@@ -6,6 +6,7 @@
 
 #include "Dix/Events/Event.h"
 #include "Dix/Events/ApplicationEvent.h"
+#include "Dix/Events/MouseEvent.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -98,6 +99,13 @@ namespace Dix
 		{
 			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 			WindowResizeEvent event(width, height);
+			data->Callback(event);
+		});
+
+		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, f64 xoffset, f64 yoffset)
+		{
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+			MouseScrolledEvent event(xoffset, yoffset);
 			data->Callback(event);
 		});
 	}

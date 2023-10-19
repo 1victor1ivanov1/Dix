@@ -54,6 +54,7 @@ namespace Dix
 		void Invalidate();
 
 		void BlitTo(SharedPtr<Framebuffer> other);
+		void Resize(u32 width, u32 height);
 
 		const FramebufferSpecification& GetSpecification() const { return m_Specification; }
 		const std::vector<FramebufferTextureSpecification>& GetColorAttachmentSpeifications() const { return m_ColorAttachmentSpecifications; }

@@ -45,9 +45,10 @@ namespace Dix
 
 		void OnEvent(Event& event);
 
-		void* GetNativeWindow() const { return m_Window->GetNativeWindow(); }
+		Window& GetWindow() const { return *m_Window; }
+		ImGuiLayer& GetImGuiLayer() const { return *m_ImGuiLayer; }
 
-		static Application* Get() { return s_Instance; }
+		static Application& Get() { return *s_Instance; }
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& event);
