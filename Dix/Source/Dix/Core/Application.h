@@ -7,6 +7,8 @@
 #include "Dix/Events/Event.h"
 #include "Dix/Events/ApplicationEvent.h"
 
+#include "Dix/ImGui/ImGuiLayer.h"
+
 namespace Dix
 {
 	struct ApplicationCommandLineArgs
@@ -30,12 +32,6 @@ namespace Dix
 		ApplicationSpecification() = default;
 	};
 
-	struct ApplicationTelemetry
-	{
-		float FrameTime = 0.0f;
-		float FPS = 0.0f;
-	};
-
 	class Application
 	{
 	public:
@@ -52,12 +48,8 @@ namespace Dix
 		void* GetNativeWindow() const { return m_Window->GetNativeWindow(); }
 
 		static Application* Get() { return s_Instance; }
-		static ApplicationTelemetry GetTelemetry() { return s_Telemetry; }
 
 	private:
-		void Init();
-		void Shutdown();
-
 		bool OnWindowClose(WindowCloseEvent& event);
 		bool OnWindowResize(WindowResizeEvent& event);
 
@@ -67,6 +59,7 @@ namespace Dix
 		UniquePtr<Window> m_Window;
 
 		LayerStack m_LayerStack;
+		ImGuiLayer* m_ImGuiLayer;
 
 		bool m_Running = true;
 		bool m_Minimized = false;
@@ -74,7 +67,6 @@ namespace Dix
 
 	private:
 		static Application* s_Instance;
-		static ApplicationTelemetry s_Telemetry;
 	};
 
 	Application* CreateApplication(ApplicationCommandLineArgs args);

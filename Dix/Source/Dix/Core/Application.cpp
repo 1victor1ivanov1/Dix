@@ -2,10 +2,6 @@
 
 #include "Dix/Core/Application.h"
 
-#include "Dix/Renderer/Shader.h"
-#include "Dix/Renderer/Texture.h"
-#include "Dix/Renderer/VertexArray.h"
-#include "Dix/Renderer/Framebuffer.h"
 #include "Dix/Renderer/RenderCommand.h"
 
 #include "Dix/Utils/PlatformUtils.h"
@@ -18,13 +14,20 @@
 namespace Dix
 {
     Application* Application::s_Instance = nullptr;
-    ApplicationTelemetry Application::s_Telemetry;
 
     Application::Application(const ApplicationSpecification& spec)
+        : m_Specification(spec)
     {
-        m_Specification = spec;
+        DIX_CORE_ASSERT(!s_Instance, "Instance of Application already exists!");
+        s_Instance = this;
 
-        Init();
+        m_Window = Window::Create(WindowProperties(m_Specification.Name));
+        m_Window->SetEventCallback(DIX_BIND_EVENT_CALLBACK(Application::OnEvent));
+
+        RenderCommand::Init();
+
+        m_ImGuiLayer = new ImGuiLayer();
+        PushOverlay(m_ImGuiLayer);
 
         Layer* testLayer = new TestLayer();
         PushLayer(testLayer);
@@ -32,7 +35,6 @@ namespace Dix
 
     Application::~Application()
     {
-        Shutdown();
     }
 
     void Application::Run()
@@ -40,12 +42,9 @@ namespace Dix
 
         while (m_Running)
         {
-            float time = Time::GetTime();
+            f32 time = Time::GetTime();
             Timestep timestep = time - m_LastFrameTime;
             m_LastFrameTime = time;
-
-            s_Telemetry.FrameTime = timestep;
-            s_Telemetry.FPS = 1.0f / timestep;
 
             if (!m_Minimized)
             {
@@ -54,10 +53,12 @@ namespace Dix
                     layer->OnUpdate(timestep);
                 }
 
+                m_ImGuiLayer->Begin();
                 for (auto layer : m_LayerStack)
                 {
                     layer->OnImGuiRender();
                 }
+                m_ImGuiLayer->End();
             }
 
             m_Window->OnUpdate();
@@ -88,22 +89,6 @@ namespace Dix
                 break;
             (*it)->OnEvent(event);
         }
-    }
-
-    void Application::Init()
-    {
-        DIX_CORE_ASSERT(!s_Instance, "Instance of Application already exists!");
-        s_Instance = this;
-
-        m_Window = Window::Create();
-        m_Window->SetEventCallback(DIX_BIND_EVENT_CALLBACK(Application::OnEvent));
-
-        RenderCommand::Init();
-    }
-
-    void Application::Shutdown()
-    {
-
     }
 
     bool Application::OnWindowClose(WindowCloseEvent& event)
