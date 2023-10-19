@@ -35,6 +35,7 @@ project "Dix"
         "%{IncludeDirs.glm}",
         "%{IncludeDirs.stb_image}",
         "%{IncludeDirs.assimp}",
+        "%{IncludeDirs.ImGui}",
     }
 
     links
@@ -42,6 +43,7 @@ project "Dix"
         "GLFW",
         "Glad",
         "assimp",
+        "ImGui",
         "opengl32.lib",
     }
 
