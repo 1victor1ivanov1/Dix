@@ -14,8 +14,7 @@ project "Dix"
     {
         "Source/**.h",
         "Source/**.cpp",
-        "Vendor/stb_image/stb_image.h",
-        "Vendor/stb_image/stb_image.cpp",
+
         "Vendor/glm/glm/**.hpp",
         "Vendor/glm/glm/**.inl",
     }
@@ -44,6 +43,7 @@ project "Dix"
         "Glad",
         "TinyObjLoader",
         "ImGui",
+        "stb_image",
         "opengl32.lib",
     }
 

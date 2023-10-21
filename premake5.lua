@@ -24,6 +24,7 @@ group "Dependencies"
     include "Dix/Vendor/Glad"
     include "Dix/Vendor/TinyObjLoader"
     include "Dix/Vendor/ImGui"
+    include "Dix/Vendor/stb_image"
 group ""
 
 group "Core"
