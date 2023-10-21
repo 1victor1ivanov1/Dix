@@ -4,6 +4,8 @@
 
 #include "Dix/Renderer/RenderCommand.h"
 
+#include "Dix/Asset/TextureImporter.h"
+
 #include "Dix/Utils/PlatformUtils.h"
 
 #include <glad/glad.h>
@@ -15,7 +17,7 @@ namespace Dix
 		shader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/test.glsl");
 		tonemappingShader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/Tonemapping.glsl");
 
-		texture = Texture2D::Create("C:/Users/1vvvi/Desktop/viking_room/viking_room.png", true);
+		texture = TextureImporter::LoadTexture2D("C:/Users/1vvvi/Desktop/viking_room/viking_room.png", true);
 
 		model = Model::Create("C:/Users/1vvvi/Desktop/viking_room/viking_room.obj");
 
