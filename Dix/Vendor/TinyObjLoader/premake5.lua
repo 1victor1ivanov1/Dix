@@ -1,8 +1,3 @@
-sources = {
-   "loader_example.cc",
-   }
-
--- premake5.lua
 project "TinyObjLoader"
    kind "StaticLib"
    language "C++"
