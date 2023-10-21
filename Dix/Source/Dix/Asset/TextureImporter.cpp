@@ -17,7 +17,7 @@ namespace Dix
 
 		if (!buffer.Data)
 		{
-			DIX_CORE_ERROR("Failed to load texture at {0}", filepath);
+			DIX_CORE_ERROR("TextureImporter::LoadTexture2D - Failed to load texture at path {0}", filepath);
 			return nullptr;
 		}
 
