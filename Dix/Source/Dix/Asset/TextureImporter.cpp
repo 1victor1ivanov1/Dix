@@ -6,13 +6,15 @@
 
 namespace Dix
 {
-	SharedPtr<Texture2D> TextureImporter::LoadTexture2D(const std::string& filepath, bool sRGB)
+	SharedPtr<Texture2D> TextureImporter::LoadTexture2D(const std::filesystem::path& filepath, bool sRGB)
 	{
 		stbi_set_flip_vertically_on_load(true);
 
 		i32 width, height, channels;
 		Buffer buffer;
-		buffer.Data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+
+		std::string pathString = filepath.string();
+		buffer.Data = stbi_load(pathString.c_str(), &width, &height, &channels, 0);
 		buffer.Size = width * height * channels;
 
 		if (!buffer.Data)
