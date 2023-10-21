@@ -10,6 +10,8 @@
 
 #include "Dix/Events/ApplicationEvent.h"
 
+#include "Dix/Scene/Model.h"
+
 namespace Dix
 {
 	class TestLayer : public Layer
@@ -23,6 +25,8 @@ namespace Dix
 		virtual void OnDetach() override;
 
 		virtual void OnUpdate(Timestep ts) override;
+
+		virtual void OnImGuiRender() override;
 	
 		virtual void OnEvent(Event& event) override;
 
@@ -33,13 +37,13 @@ namespace Dix
 		SharedPtr<Shader> shader;
 		SharedPtr<Shader> tonemappingShader;
 
-		SharedPtr<Texture2D> texture;
-
 		SharedPtr<Framebuffer> framebuffer;
 		SharedPtr<Framebuffer> resolveFramebuffer;
 
-		SharedPtr<VertexArray> vertexArray;
 		SharedPtr<VertexArray> tonemappingVertexArray;
+
+		SharedPtr<Model> model;
+		SharedPtr<Texture2D> texture;
 
 		Camera camera;
 

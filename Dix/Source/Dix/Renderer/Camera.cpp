@@ -4,6 +4,8 @@
 
 #include "Dix/Renderer/Camera.h"
 
+#include <imgui.h>
+
 namespace Dix
 {
 	Dix::Camera::Camera(f32 fov, f32 aspectRatio, f32 nearClip, f32 farClip)
@@ -20,31 +22,38 @@ namespace Dix
 		{
 			if (Input::IsKeyPressed(Key::W))
 			{
-				m_Position += m_Forward * 1.5f * ts.GetSeconds();
+				m_Position += m_Forward * m_Speed * ts.GetSeconds();
 			}
 			if (Input::IsKeyPressed(Key::A))
 			{
-				m_Position -= m_Right * 1.5f * ts.GetSeconds();
+				m_Position -= m_Right * m_Speed * ts.GetSeconds();
 			}
 			if (Input::IsKeyPressed(Key::S))
 			{
-				m_Position -= m_Forward * 1.5f * ts.GetSeconds();
+				m_Position -= m_Forward * m_Speed * ts.GetSeconds();
 			}
 			if (Input::IsKeyPressed(Key::D))
 			{
-				m_Position += m_Right * 1.5f * ts.GetSeconds();
+				m_Position += m_Right * m_Speed * ts.GetSeconds();
+			}
+			if (Input::IsKeyPressed(Key::Q))
+			{
+				m_Position += m_Up * m_Speed * ts.GetSeconds();
+			}
+			if (Input::IsKeyPressed(Key::E))
+			{
+				m_Position -= m_Up * m_Speed * ts.GetSeconds();
 			}
 		}
 
 		{
-			if (Input::IsMouseButtonPressed(Mouse::ButtonLeft))
+			if (Input::IsKeyPressed(Key::LeftAlt))
 			{
 				glm::vec2 currentMousePosition = Input::GetMousePosition();
 				glm::vec2 mouseOffset = currentMousePosition - m_LastMousePosition;
 				m_LastMousePosition = currentMousePosition;
 
-				f32 sensitivity = 0.1f;
-				mouseOffset *= sensitivity;
+				mouseOffset *= m_Sensetivity;
 
 				m_Yaw += mouseOffset.x;
 				m_Pitch -= mouseOffset.y;
@@ -67,12 +76,22 @@ namespace Dix
 		UpdateView();
 	}
 
+	void Camera::OnImGuiRender()
+	{
+		ImGui::Begin("Camera control");
+
+		ImGui::SliderFloat("Camera Speed", &m_Speed, 0.0f, 10.0f);
+		ImGui::SliderFloat("Camera Sensetivity", &m_Sensetivity, 0.0f, 1.0f);
+
+		ImGui::End();
+	}
+
 	void Camera::OnEvent(Event& event)
 	{
 		EventDispatcher dispatcher(event);
 
 		dispatcher.Dispatch<WindowResizeEvent>(DIX_BIND_EVENT_CALLBACK(Camera::OnWindowResize));
-		dispatcher.Dispatch<MouseScrolledEvent>(DIX_BIND_EVENT_CALLBACK(Camera::OnMouseScrolled));
+		dispatcher.Dispatch<MouseScrolledEvent>(DIX_BIND_EVENT_CALLBACK(Camera::OnMouseScroll));
 	}
 
 	void Camera::UpdateProjection()
@@ -93,9 +112,9 @@ namespace Dix
 		return false;
 	}
 
-	bool Camera::OnMouseScrolled(MouseScrolledEvent& event)
+	bool Camera::OnMouseScroll(MouseScrolledEvent& event)
 	{
-		m_FOV -= event.GetYOffset();
+		m_FOV -= event.GetOffsetY();
 		if (m_FOV < 1.0f)
 			m_FOV = 1.0f;
 		if (m_FOV > 45.0f)

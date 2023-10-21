@@ -15,7 +15,9 @@ namespace Dix
 		shader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/test.glsl");
 		tonemappingShader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/Tonemapping.glsl");
 
-		texture = Texture2D::Create("C:/Users/1vvvi/Desktop/papka_for_papok/backgrounds/крутой куджицу.png", true);
+		texture = Texture2D::Create("C:/Users/1vvvi/Desktop/viking_room/viking_room.png", true);
+
+		model = Model::Create("C:/Users/1vvvi/Desktop/viking_room/viking_room.obj");
 
 		FramebufferSpecification fSpec;
 		fSpec.Width = 1280;
@@ -31,63 +33,8 @@ namespace Dix
 		resolveFSpec.Attachments = { FramebufferTextureFormat::RGBA8 };
 		resolveFramebuffer = Framebuffer::Create(resolveFSpec);
 
-		float vertices[] = {
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-		};
-
-		SharedPtr<VertexBuffer> vertexBuffer;
-		SharedPtr<IndexBuffer> indexBuffer;
-
-		vertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
-		vertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Position" },
-			{ ShaderDataType::Float2, "a_TexCoords" },
-		});
-
-		vertexArray = VertexArray::Create();
 		tonemappingVertexArray = VertexArray::Create();
 
-		vertexArray->AddVertexBuffer(vertexBuffer);
 		camera = Camera(45.f, 1280.f / 720.f, 0.1f, 100.f);
 	}
 
@@ -108,17 +55,12 @@ namespace Dix
 		shader->Bind();
 		texture->Bind();
 
-		for (i32 i = 0; i < 10; i++)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			
-			shader->SetMat("u_ModelViewProjectionMatrix", camera.GetViewProjectionMatrix() * model);
+		glm::mat4 m(1.0f);
+		m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(1, 0, 0));
+		m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(0, 0, 1));
 
-			RenderCommand::DrawArrays(vertexArray, 36);
-		}
+		shader->SetMat("u_ModelViewProjectionMatrix", camera.GetViewProjectionMatrix() * m);
+		model->Render();
 		
 		shader->Unbind();
 		framebuffer->Unbind();
@@ -131,12 +73,17 @@ namespace Dix
 		tonemappingShader->Unbind();
 	}
 
+	void TestLayer::OnImGuiRender()
+	{
+		camera.OnImGuiRender();
+	}
+
 	void TestLayer::OnEvent(Event& event)
 	{
+		camera.OnEvent(event);
+
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowResizeEvent>(DIX_BIND_EVENT_CALLBACK(TestLayer::OnWindowResize));
-
-		camera.OnEvent(event);
 	}
 
 	bool TestLayer::OnWindowResize(WindowResizeEvent& event)

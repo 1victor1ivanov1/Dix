@@ -119,7 +119,7 @@ namespace Dix
 				}
 
 				default:
-					DIX_CORE_ASSERT(false, "Unknown shader data type!")
+					DIX_CORE_ASSERT(false, "Unknown shader data type!");
 			}
 		}
 

@@ -4,6 +4,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+extern "C" {
+	_declspec(dllexport) DWORD NvOptimusEnablement = 1;
+	_declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
+
 namespace Dix
 {
 	GraphicsContext::GraphicsContext(GLFWwindow* windowHandle)

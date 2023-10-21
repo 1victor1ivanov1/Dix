@@ -23,6 +23,7 @@ namespace Dix
 		glm::mat4 GetViewProjectionMatrix() const { return m_ProjectionMatrix * m_ViewMatrix; }
 
 		void OnUpdate(Timestep ts);
+		void OnImGuiRender();
 		void OnEvent(Event& event);
 
 	private:
@@ -30,12 +31,14 @@ namespace Dix
 		void UpdateView();
 
 		bool OnWindowResize(WindowResizeEvent& event);
-		bool OnMouseScrolled(MouseScrolledEvent& event);
-		
+		bool OnMouseScroll(MouseScrolledEvent& event);
+
 	private:
 		f32 m_FOV = 45.0f, m_AspectRatio = 1.0f, m_Near = 0.1f, m_Far = 100.0f;
 
 		f32 m_Pitch = 0.0f, m_Yaw = -90.0f;
+
+		f32 m_Speed = 1.5f, m_Sensetivity = 0.1f;
 
 		glm::mat4 m_ProjectionMatrix;
 		glm::mat4 m_ViewMatrix;

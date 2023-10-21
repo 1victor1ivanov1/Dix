@@ -8,6 +8,8 @@
 
 #include <glad/glad.h>
 
+#include <imgui.h>
+
 //for testing
 #include "Dix/Core/TestLayer.h"
 
@@ -58,6 +60,12 @@ namespace Dix
                 {
                     layer->OnImGuiRender();
                 }
+
+                ImGui::Begin("Perfomance");
+                ImGui::Text("Frame time: %.3f ms", timestep.GetMilliseconds());
+                ImGui::Text("FPS: %.1f", 1 / timestep);
+                ImGui::End();
+
                 m_ImGuiLayer->End();
             }
 

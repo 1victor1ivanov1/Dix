@@ -98,6 +98,9 @@ namespace Dix
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, i32 width, i32 height)
 		{
 			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+			data->Width = width;
+			data->Height = height;
+
 			WindowResizeEvent event(width, height);
 			data->Callback(event);
 		});
@@ -106,6 +109,13 @@ namespace Dix
 		{
 			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 			MouseScrolledEvent event(xoffset, yoffset);
+			data->Callback(event);
+		});
+
+		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, f64 xpos, f64 ypos)
+		{
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+			MouseMovedEvent event(xpos, ypos);
 			data->Callback(event);
 		});
 	}
