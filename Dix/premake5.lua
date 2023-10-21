@@ -5,7 +5,7 @@ project "Dix"
     staticruntime "off"
 
     targetdir ("%{wks.location}/Build/Bin/" .. outputdir .. "/%{prj.name}")
-    objdir ("%{wks.location}/Build/Int/" .. outputdir .. "/%{prj.name}")
+    objdir    ("%{wks.location}/Build/Int/" .. outputdir .. "/%{prj.name}")
 
     pchheader "dixpch.h"
     pchsource "Source/dixpch.cpp"
