@@ -15,7 +15,7 @@
 #include "Dix/Core/KeyCodes.h"
 #include "Dix/Core/MouseCodes.h"
 //
-//#include "Dix/ImGui/ImGuiLayer.h"
+#include "Dix/ImGui/ImGuiLayer.h"
 
 //#include "Dix/Scene/Scene.h"
 //#include "Dix/Scene/Entity.h"
