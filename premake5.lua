@@ -22,7 +22,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 group "Dependencies"
     include "Dix/Vendor/GLFW"
     include "Dix/Vendor/Glad"
-    include "Dix/Vendor/Assimp"
+    include "Dix/Vendor/TinyObjLoader"
     include "Dix/Vendor/ImGui"
 group ""
 

@@ -34,7 +34,7 @@ project "Dix"
         "%{IncludeDirs.spdlog}",
         "%{IncludeDirs.glm}",
         "%{IncludeDirs.stb_image}",
-        "%{IncludeDirs.assimp}",
+        "%{IncludeDirs.TinyObjLoader}",
         "%{IncludeDirs.ImGui}",
     }
 
@@ -42,7 +42,7 @@ project "Dix"
     {
         "GLFW",
         "Glad",
-        "assimp",
+        "TinyObjLoader",
         "ImGui",
         "opengl32.lib",
     }
