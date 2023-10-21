@@ -9,19 +9,14 @@ namespace Dix
 	class Model
 	{
 	public:
-		Model(const std::string& filepath);
+		Model(const std::vector<SharedPtr<Mesh>>& meshes);
 		~Model();
-
-		const std::string& GetPath() const { return m_Path; }
-		const std::string& GetName() const { return m_Name; }
 
 		void Render() const;
 
-		static SharedPtr<Model> Create(const std::string filepath);
+		static SharedPtr<Model> Create(const std::vector<SharedPtr<Mesh>>& meshes);
 
 	private:
 		std::vector<SharedPtr<Mesh>> m_Meshes;
-
-		std::string m_Path, m_Name;
 	};
 }
