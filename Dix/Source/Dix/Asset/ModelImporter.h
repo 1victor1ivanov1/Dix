@@ -12,7 +12,6 @@ namespace Dix
 		ModelImporter() = delete;
 		~ModelImporter() = delete;
 
-		static SharedPtr<Model> LoadObjModel(const std::filesystem::path& filepath);
-		static SharedPtr<Model> LoadGLTFModel(const std::filesystem::path& filepath);
+		static SharedPtr<Model> LoadModel(const std::filesystem::path& filepath);
 	};
 }

@@ -4,54 +4,54 @@
 
 layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Normal;
-layout (location = 2) in vec2 a_TexCoords;
+layout (location = 2) in vec2 a_TexCoord;
 layout (location = 3) in vec3 a_Tangent;
 layout (location = 4) in vec3 a_Bitangent;
 
-layout(location = 0) out VS_OUT {
+layout(location = 0) out VertexOutput {
     vec3 WorldPosition;
-    vec2 TexCoords;
+    vec2 TexCoord;
     mat3 TBNMatrix;
-} vs_out;
+} Output;
 
 layout(location = 0) uniform mat4 u_ModelMatrix;
 layout(location = 1) uniform mat4 u_ViewProjectionMatrix;
-layout(location = 2) uniform mat3 u_NormalMatrix;
 
 void main()
 {
-   vs_out.WorldPosition = vec3(u_ModelMatrix * vec4(a_Position, 1.0f));   
-   vs_out.TexCoords = a_TexCoords;
+   Output.WorldPosition = vec3(u_ModelMatrix * vec4(a_Position, 1.0f));   
+   Output.TexCoord = a_TexCoord;
 
    vec3 T = normalize(vec3(u_ModelMatrix * vec4(a_Tangent,   0.0f)));
    vec3 B = normalize(vec3(u_ModelMatrix * vec4(a_Bitangent, 0.0f)));
    vec3 N = normalize(vec3(u_ModelMatrix * vec4(a_Normal,    0.0f)));
-   vs_out.TBNMatrix = mat3(T, B, N);
+   Output.TBNMatrix = mat3(T, B, N);
 
-   gl_Position = u_ViewProjectionMatrix * vec4(vs_out.WorldPosition, 1.0f);
+   gl_Position = u_ViewProjectionMatrix * vec4(Output.WorldPosition, 1.0f);
 }
 
 #type fragment
 
 #version 460 core
 
-layout(location = 0) in VS_OUT {
+layout(location = 0) in VertexOutput {
     vec3 WorldPosition;
-    vec2 TexCoords;
+    vec2 TexCoord;
     mat3 TBNMatrix;
-} fin;
+} Input;
 
 layout(location = 0) out vec4 OutputColor;
 
 layout(binding = 0) uniform sampler2D u_AlbedoTexture;
 layout(binding = 1) uniform sampler2D u_NormalTexture;
-layout(binding = 2) uniform sampler2D u_MetallicTexture;
-layout(binding = 3) uniform sampler2D u_RoughnessTexture;
+layout(binding = 2) uniform sampler2D u_MetallicRoughnessTexture;
+layout(binding = 3) uniform sampler2D u_EmissiveTexture;
 
 layout(location = 3) uniform vec3 u_ViewPosition;
 
-uniform vec3 lightPositions[4];
-uniform vec3 lightColors[4];
+const int c_MaxLightCount = 1;
+uniform vec3 lightPositions[c_MaxLightCount];
+uniform vec3 lightColors[c_MaxLightCount];
 
 const float M_PI = 3.14159265358979323846;
 const float epsilon = 0.00001f;
@@ -102,23 +102,24 @@ float CalculateAttenuation(vec3 fragmentPosition, vec3 lightPosition)
 
 void main()
 {           
-    vec3 albedo = texture(u_AlbedoTexture, fin.TexCoords).rgb;
-    vec3 normal = normalize(fin.TBNMatrix * (normalize(texture(u_NormalTexture, fin.TexCoords).rgb * 2.0f - 1.0f)));
-    float metalness = texture(u_MetallicTexture, fin.TexCoords).r;
-    float roughness = texture(u_RoughnessTexture, fin.TexCoords).r;
+    vec3 albedo = texture(u_AlbedoTexture, Input.TexCoord).rgb;
+    vec3 normal = normalize(Input.TBNMatrix * (normalize(texture(u_NormalTexture, Input.TexCoord).rgb * 2.0f - 1.0f)));
+    vec2 metalnessRoughness = texture(u_MetallicRoughnessTexture, Input.TexCoord).bg;
+    float metalness = metalnessRoughness.r;
+    float roughness = metalnessRoughness.g;
 
-    vec3 viewDirection = normalize(u_ViewPosition - fin.WorldPosition);
+    vec3 viewDirection = normalize(u_ViewPosition - Input.WorldPosition);
 
     vec3 F0 = vec3(0.04f);
     F0 = mix(F0, albedo, metalness);
 
     vec3 directLighting = vec3(0.0);
-    for(int i = 0; i < 4; ++i) 
+    for(int i = 0; i < c_MaxLightCount; ++i)
     {
-        vec3 L = normalize(lightPositions[i] - fin.WorldPosition);
+        vec3 L = normalize(lightPositions[i] - Input.WorldPosition);
         vec3 H = normalize(viewDirection + L);
       
-        float attenuation = CalculateAttenuation(fin.WorldPosition, lightPositions[i]);
+        float attenuation = CalculateAttenuation(Input.WorldPosition, lightPositions[i]);
         vec3 radiance     = lightColors[i] * attenuation;
 
         vec3 F = FresnelSchlick(max(dot(H, viewDirection), 0.0f), F0);

@@ -53,6 +53,16 @@ namespace Dix
 		glUseProgram(0);
 	}
 
+	void Shader::SetVec(const std::string& name, const glm::vec3& vec)
+	{
+		glUniform3fv(glGetUniformLocation(m_RendererID, name.c_str()), 1, glm::value_ptr(vec));
+	}
+
+	void Shader::SetVec(const std::string& name, const glm::vec4& vec)
+	{
+		glUniform4fv(glGetUniformLocation(m_RendererID, name.c_str()), 1, glm::value_ptr(vec));
+	}
+
 	void Shader::SetMat(const std::string& name, const glm::mat3& mat)
 	{
 		glUniformMatrix3fv(glGetUniformLocation(m_RendererID, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));

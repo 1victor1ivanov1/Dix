@@ -17,11 +17,11 @@ namespace Dix
 		glm::vec3 Position;
 		glm::vec2 TexCoord;
 		glm::vec3 Normal;
-		//glm::vec3 Tangent;
-		//glm::vec3 Bitangent;
+		glm::vec3 Tangent;
+		glm::vec3 Bitangent;
 
 		bool operator==(const MeshVertex& other) const {
-			return Position == other.Position && TexCoord == other.TexCoord && Normal == other.Normal/* && Tangent == other.Tangent && Bitangent == other.Bitangent*/;
+			return Position == other.Position && TexCoord == other.TexCoord && Normal == other.Normal && Tangent == other.Tangent && Bitangent == other.Bitangent;
 		}
 	};
 
@@ -46,9 +46,11 @@ namespace std
 	struct hash<Dix::MeshVertex>
 	{
 		u64 operator()(Dix::MeshVertex const& vertex) const {
-			return ((hash<glm::vec3>{}(vertex.Position) ^
-				(hash<glm::vec2>{}(vertex.TexCoord) << 1)) >> 1) ^
-				(hash<glm::vec3>{}(vertex.Normal) << 1);
+			return ((((((hash<glm::vec3>{}(vertex.Position) ^ 
+				(hash<glm::vec2>{}(vertex.TexCoord) << 1)) >> 1) ^ 
+				(hash<glm::vec3>{}(vertex.Normal) << 1)) >> 1) ^ 
+				(hash<glm::vec3>{}(vertex.Tangent) << 1)) >> 1) ^ 
+				(hash<glm::vec3>{}(vertex.Bitangent) << 1);
 		}
 	};
 }

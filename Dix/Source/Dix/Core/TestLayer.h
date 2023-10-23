@@ -7,6 +7,7 @@
 #include "Dix/Renderer/Texture.h"
 #include "Dix/Renderer/Shader.h"
 #include "Dix/Renderer/Camera.h"
+#include "Dix/Renderer/UniformBuffer.h"
 
 #include "Dix/Events/ApplicationEvent.h"
 
@@ -42,22 +43,20 @@ namespace Dix
 
 		SharedPtr<VertexArray> tonemappingVertexArray;
 
+		SharedPtr<UniformBuffer> uniformBuffer;
+
 		SharedPtr<Model> model;
-		SharedPtr<Texture2D> texture;
+		SharedPtr<Texture2D> albedoTexture;
+		SharedPtr<Texture2D> normalTexture;
+		SharedPtr<Texture2D> metallicRoughnessTexture;
+		SharedPtr<Texture2D> emissiveTexture;
+
+		struct TransformData
+		{
+			glm::mat4 ModelMatrix;
+			glm::mat4 ViewProjectionMatrix;
+		} transformData;
 
 		Camera camera;
-
-		glm::vec3 cubePositions[10] = {
-			glm::vec3(0.0f,  0.0f,  0.0f),
-			glm::vec3(2.0f,  5.0f, -15.0f),
-			glm::vec3(-1.5f, -2.2f, -2.5f),
-			glm::vec3(-3.8f, -2.0f, -12.3f),
-			glm::vec3(2.4f, -0.4f, -3.5f),
-			glm::vec3(-1.7f,  3.0f, -7.5f),
-			glm::vec3(1.3f, -2.0f, -2.5f),
-			glm::vec3(1.5f,  2.0f, -2.5f),
-			glm::vec3(1.5f,  0.2f, -1.5f),
-			glm::vec3(-1.3f,  1.0f, -1.5f)
-		};
 	};
 }

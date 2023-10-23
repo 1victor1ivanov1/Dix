@@ -5,6 +5,7 @@
 #include "Dix/Renderer/RenderCommand.h"
 
 #include "Dix/Asset/TextureImporter.h"
+#include "Dix/Asset/ModelImporter.h"
 
 #include "Dix/Utils/PlatformUtils.h"
 
@@ -17,23 +18,27 @@ namespace Dix
 		shader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/test.glsl");
 		tonemappingShader = Shader::Create("C:/Users/1vvvi/Desktop/Dix/Sandbox/Assets/Shaders/Tonemapping.glsl");
 
-		texture = TextureImporter::LoadTexture2D("C:/Users/1vvvi/Desktop/viking_room/viking_room.png", true);
-
-		model = Model::Create("C:/Users/1vvvi/Desktop/viking_room/viking_room.obj");
+		albedoTexture = TextureImporter::LoadTexture2D("C:/Users/1vvvi/Desktop/firelink_greatsword/textures/Material_baseColor.png", true);
+		normalTexture = TextureImporter::LoadTexture2D("C:/Users/1vvvi/Desktop/firelink_greatsword/textures/Material_normal.png");
+		metallicRoughnessTexture = TextureImporter::LoadTexture2D("C:/Users/1vvvi/Desktop/firelink_greatsword/textures/Material_metallicRoughness.png");;
+		emissiveTexture = TextureImporter::LoadTexture2D("C:/Users/1vvvi/Desktop/firelink_greatsword/textures/Material_emissive.png");;
+		model = ModelImporter::LoadModel("C:/Users/1vvvi/Desktop/firelink_greatsword/scene.gltf");
 
 		FramebufferSpecification fSpec;
 		fSpec.Width = 1280;
 		fSpec.Height = 720;
 		fSpec.Samples = 4;
-		fSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::DEPTH24_STENCIL8 };
+		fSpec.Attachments = { FramebufferTextureFormat::RGBA16F, FramebufferTextureFormat::DEPTH24_STENCIL8 };
 		framebuffer = Framebuffer::Create(fSpec);
 
 		FramebufferSpecification resolveFSpec;
 		resolveFSpec.Width = 1280;
 		resolveFSpec.Height = 720;
 		resolveFSpec.Samples = 1;
-		resolveFSpec.Attachments = { FramebufferTextureFormat::RGBA8 };
+		resolveFSpec.Attachments = { FramebufferTextureFormat::RGBA16F };
 		resolveFramebuffer = Framebuffer::Create(resolveFSpec);
+
+		uniformBuffer = UniformBuffer::Create(sizeof(TransformData));
 
 		tonemappingVertexArray = VertexArray::Create();
 
@@ -49,19 +54,23 @@ namespace Dix
 	{
 		camera.OnUpdate(ts);
 
+		glm::mat4 m(1.0f);
+
+		transformData.ModelMatrix = m;
+		transformData.ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		uniformBuffer->SetData(&transformData, sizeof(TransformData));
+
 		framebuffer->Bind();
 		RenderCommand::SetClearColor({ 0.2f, 0.3f, 0.3f, 1.0f });
 		RenderCommand::Clear();
 		RenderCommand::EnableDepthTest();
 
 		shader->Bind();
-		texture->Bind();
+		albedoTexture->Bind(0);
+		normalTexture->Bind(1);
+		metallicRoughnessTexture->Bind(2);
+		emissiveTexture->Bind(3);
 
-		glm::mat4 m(1.0f);
-		m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(1, 0, 0));
-		m = glm::rotate(m, glm::radians(-90.0f), glm::vec3(0, 0, 1));
-
-		shader->SetMat("u_ModelViewProjectionMatrix", camera.GetViewProjectionMatrix() * m);
 		model->Render();
 		
 		shader->Unbind();

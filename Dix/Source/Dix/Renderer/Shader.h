@@ -16,6 +16,9 @@ namespace Dix
 		std::string GetName() const { return m_Name; }
 		std::string GetFilepath() const { return m_Filepath; }
 
+		void SetVec(const std::string& name, const glm::vec3& vec);
+		void SetVec(const std::string& name, const glm::vec4& vec);
+
 		void SetMat(const std::string& name, const glm::mat3& mat);
 		void SetMat(const std::string& name, const glm::mat4& mat);
 

@@ -115,10 +115,10 @@ namespace Dix
 	bool Camera::OnMouseScroll(MouseScrolledEvent& event)
 	{
 		m_FOV -= event.GetOffsetY();
-		if (m_FOV < 1.0f)
-			m_FOV = 1.0f;
-		if (m_FOV > 45.0f)
-			m_FOV = 45.0f;
+		if (m_FOV < 5.0f)
+			m_FOV = 5.0f;
+		if (m_FOV > 90.0f)
+			m_FOV = 90.0f;
 		UpdateProjection();
 
 		return false;
